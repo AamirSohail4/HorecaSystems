@@ -1,0 +1,23 @@
+.scrolbtn {
+	display: flex;
+	align-items: center;
+	justify-content: end;
+	padding: 13px 21px 0px 0px;
+}
+svg#scroll {
+	display: block;
+	line-height: 32px !important;
+	font-size: 35px;
+	color: #0f1417;
+	padding: 10px;
+	border: 1px solid;
+	border-radius: 50px;
+	cursor: pointer;
+    font-family: sans-serif;
+}
+.hide {
+	visibility: hidden;
+}
+.visible {
+	visibility: visible;
+}

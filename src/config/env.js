@@ -1,0 +1,15 @@
+export const api_url = import.meta.env.VITE_APP_API_URL;
+export const bannerText_url = import.meta.env.VITE_APP_API_CMS;
+export const relateProd_url = import.meta.env.VITE_APP_API_RELATED;
+export const register_url = import.meta.env.VITE_APP_API_REGISTER;
+export const verify_url = import.meta.env.VITE_APP_API_VERIFY;
+export const singUp_url = import.meta.env.VITE_APP_API_SINGUP;
+export const cart_url = import.meta.env.VITE_APP_API_CART;
+export const allProduct_url = import.meta.env.VITE_APP_API_ALLPRODUCT;
+export const shipAddres_url = import.meta.env.VITE_APP_API_SHIPADRES;
+export const userInfo_url = import.meta.env.VITE_APP_API_USERINFO;
+export const userUpdate_url = import.meta.env.VITE_APP_API_USERUPDATE;
+export const searchurl = import.meta.env.VITE_APP_API_SEARCH;
+export const wishlist_url = import.meta.env.VITE_APP_API_WISHLIST;
+export const cms_url = import.meta.env.VITE_APP_API_CMS;
+export const cms_imgs = import.meta.env.VITE_APP_API_IMGS;
