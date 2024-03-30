@@ -15,11 +15,9 @@ import { Terms } from "../pages/termsAndServices/Terms";
 import { PageNotFound } from "../pages/pagenotFound/PageNotFound";
 import { ProductsGrid } from "../pages/allproduct/ProductsGrid";
 import { QuickView } from "../pages/cart/QuickView";
-
 import { Categories } from "../pages/allproduct/Category/Categories";
 import { Verify } from "../pages/login/Verify";
 import { ManuCategory } from "../pages/allproduct/Category/ManuCategory";
-
 import { DashboardLayout } from "../layouts/DashboardLayout";
 import { Index } from "../pages/allproduct/Category";
 
@@ -32,6 +30,7 @@ export const Router = () => {
         <Route path="product/:strSEOLink" element={<SingleProduct />} />
         <Route path="signUp" element={<Register />} />
         <Route path="login" element={<Login />} />
+
         <Route path="about" element={<About />} />
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
         <Route path="contact" element={<Contact />} />

@@ -13,3 +13,5 @@ export const searchurl = import.meta.env.VITE_APP_API_SEARCH;
 export const wishlist_url = import.meta.env.VITE_APP_API_WISHLIST;
 export const cms_url = import.meta.env.VITE_APP_API_CMS;
 export const cms_imgs = import.meta.env.VITE_APP_API_IMGS;
+export const login_url = import.meta.env.VITE_APP_API_LOGIN;
+export const user_register = import.meta.env.VITE_APP_API_REG;

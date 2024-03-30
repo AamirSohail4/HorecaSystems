@@ -21,7 +21,6 @@ export const App = () => {
             <PaymentProvider>
               <AppProvider>
                 <ScrollToTop />
-
                 <Router />
               </AppProvider>
             </PaymentProvider>

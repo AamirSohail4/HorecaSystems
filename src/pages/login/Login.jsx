@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { register_url } from "../../config/env";
 import { useNavigate } from "react-router-dom";
 import img1 from "../../assets/imgs/theme/about.jpeg";
-import { intBranchID } from "../../branch/branch";
+import { intBranchID } from "../../branch/Branch";
 
 export const Login = () => {
   const [userPhone, setUserPhone] = useState("");

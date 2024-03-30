@@ -125,6 +125,16 @@ video {
   font: inherit;
   vertical-align: baseline;
 }
+.signup-link {
+  color: rgb(190, 147, 147);
+  font-size: 21px;
+  text-decoration: underline; /* Remove underline */
+  transition: color 0.3s ease; /* Add transition for color change */
+}
+
+.signup-link:hover {
+  color: white; /* Change color on hover */
+}
 .search-style-2_my .input_wrap button {
   background-color: transparent;
   padding: 0 5px 0 0;

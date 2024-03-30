@@ -38,6 +38,7 @@ export const Navbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("userId");
     localStorage.removeItem("roleId");
+    localStorage.removeItem("strToken");
     localStorage.removeItem("persist:root");
     window.location.href = "/";
   };
