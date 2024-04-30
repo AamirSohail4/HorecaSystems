@@ -1,15 +1,18 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import img1 from "../../assets/imgs/theme/logo.jpeg";
+
 import { login_proces } from "../../config/env";
+import { AddressContext } from "../../context/AddresContext";
 
 export const Verify = () => {
   const [email, setEmail] = useState();
   const navigate = useNavigate();
+  const { about } = useContext(AddressContext);
+
   const searchParams = new URLSearchParams(window.location.search);
   const token = searchParams.get("token");
 
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail.com$/;
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   useEffect(() => {
     document.title = "HORECA SYSTEMS | login";
   }, []);
@@ -77,7 +80,7 @@ export const Verify = () => {
                   <img
                     className="border-radius-15"
                     style={{ width: "400px" }}
-                    src={img1}
+                    src={about?.strHeaderImagePath}
                     alt=""
                   />
                 </div>

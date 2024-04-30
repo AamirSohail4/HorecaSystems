@@ -15,3 +15,5 @@ export const cms_url = import.meta.env.VITE_APP_API_CMS;
 export const cms_imgs = import.meta.env.VITE_APP_API_IMGS;
 export const login_url = import.meta.env.VITE_APP_API_LOGIN;
 export const login_proces = import.meta.env.VITE_APP_API_REG;
+export const city_url=import.meta.env.VITE_APP_API_CITY;
+export const report_url=import.meta.env.VITE_APP_API_REPORT;

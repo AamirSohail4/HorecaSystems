@@ -36,16 +36,22 @@ export const Navbar = () => {
     navigate(`/Category?&cateogry_name=${seolink}`);
   };
   const handleLogout = () => {
-    localStorage.removeItem("userId");
-    localStorage.removeItem("roleId");
-    localStorage.removeItem("strToken");
-    localStorage.removeItem("persist:root");
+    // Remove items from local storage
+    localStorage.removeItem('customerId');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('strToken');
+
+    // Clear variables
+    let customerId = null;
+    let userId = null;
+    let strToken = null;
+    window.location.reload();
     window.location.href = "/";
-  };
+};
 
   async function ManuDisplay() {
     const response = await fetch(
-      `${cart_url}&tag=get_all_category&intCompanyID=1`
+      `${cart_url}&tag=get_all_category_web&intCompanyID=1`
     );
     const paymentMode = await response.json();
 
@@ -68,7 +74,9 @@ export const Navbar = () => {
   };
 
   async function SearchBarCategory() {
-    const response = await fetch(`${searchurl}&tag=get_category`);
+    const response = await fetch(
+      `${cart_url}&tag=get_category_web&intCompanyID=1`
+    );
     const categoryData = await response.json();
     setSearchBarCategory(categoryData.data);
   }
@@ -124,8 +132,8 @@ export const Navbar = () => {
     <header className="header-area header-style-1 header-height-2">
       <div className="mobile-promotion">
         <span>
-          Grand opening, <strong>up to 15%</strong> off all items. Only{" "}
-          <strong>3 days</strong> left
+          Welcome  <strong>to</strong> Horeca 
+          <strong>Systems</strong> 
         </span>
       </div>
       <div className="header-top header-top-ptb-1 d-none d-lg-block">
@@ -295,20 +303,24 @@ export const Navbar = () => {
                             <i className="fi fi-rs-user mr-10"></i>My Account
                           </Link>
                         </li>
-
                         <li>
                           <Link to="/admin/myaccount">
                             <i className="fi fi-rs-heart mr-10"></i>My Wishlist
                           </Link>
                         </li>
-
                         <li>
-                          <a
-                            className="nav-link btnLogout"
-                            onClick={handleLogout}
-                          >
-                            <i className="fi-rs-sign-out mr-10"></i>Logout
-                          </a>
+                          {userId ? (
+                            <a
+                              className="nav-link btnLogout"
+                              onClick={handleLogout}
+                            >
+                              <i className="fi-rs-sign-out mr-10"></i>Logout
+                            </a>
+                          ) : (
+                            <Link to="/login">
+                              <i className="fi-rs-sign-in mr-10"></i>Login
+                            </Link>
+                          )}
                         </li>
                       </ul>
                     </div>
@@ -441,12 +453,12 @@ export const Navbar = () => {
                 </nav>
               </div>
             </div>
-            {/* <div className="hotline d-none d-lg-flex">
+             <div className="hotline d-none d-lg-flex">
               <img src={img27} alt="hotline" />
-              <p>
-                042-35858583-4<span> Support Center</span>
-              </p>
-            </div> */}
+              <strong className="text-brand">
+                      {helpLine?.strBodyPlain}
+                    </strong>
+            </div> 
             <div className="header-action-icon-2 d-block d-lg-none">
               <div className="burger-icon burger-icon-white">
                 <span className="burger-icon-top"></span>

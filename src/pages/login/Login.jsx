@@ -1,39 +1,56 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import img1 from "../../assets/imgs/theme/about.jpeg";
 import { login_proces } from "../../config/env";
-import { BranchID } from "../../branch/branch";
+import { intBranchID } from "../../branch/branch";
+import { AddressContext } from "../../context/AddresContext";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
+  const [userInput, setUserInput] = useState("");
+  const { about } = useContext(AddressContext);
   const navigate = useNavigate();
 
-  //   const handleInputChange = (event) => {
-  //     const { name, value } = event.target;
-  //     if (name === "email") {
-  //       setEmail(value);
-  //     } else if (name === "password") {
-  //       setPassword(value);
-  //     }
-  //   };
+  const generateCaptcha = () => {
+    return Math.floor(1000 + Math.random() * 9000);
+  };
+  const [captcha, setCaptcha] = useState(generateCaptcha());
 
+  const handleRememberMeChange = (e) => {
+    setRememberMe(e.target.checked);
+  };
+  const handleInputChange = (e) => {
+    setUserInput(e.target.value);
+  };
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail.com$/;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    // Validate email pattern
     if (!email || !emailPattern.test(email)) {
       alert("Please enter a valid Gmail address.");
       return;
     }
+
+    // Validate presence of email and password
     if (!email || !password) {
       alert("Email and password are required.");
       return;
     }
 
+    // Validate CAPTCHA input
+    if (userInput !== captcha.toString()) {
+      alert("Incorrect CAPTCHA. Please try again.");
+      setCaptcha(generateCaptcha()); // Reset captcha
+      setUserInput(""); // Clear user input
+      return;
+    }
+
     try {
       const response = await fetch(
-        `${login_proces}&tag=user_login&strUserName=${email}&strPassword=${password}&intBranchID=${BranchID}&strPlatform=Web`
+        `${login_proces}&tag=user_login&strUserName=${email}&strPassword=${password}&intBranchID=${intBranchID}&strPlatform=Web`
       );
 
       const data = await response.json();
@@ -42,8 +59,17 @@ export const Login = () => {
         if (data.status === "0") {
           setErrorMessage("Email/Password not Correct Please Check it");
         } else {
+        
           localStorage.setItem("userId", data?.data?.intUserID);
           localStorage.setItem("strToken", data?.data?.strToken);
+          localStorage.setItem("customerId", data?.data?.intCustomerID);
+          if (rememberMe) {
+            // Check if "Remember Me" checkbox is checked
+            // Set cookie for remembering the user
+            document.cookie = `rememberedUser=${email};expires=${new Date(
+              Date.now() + 30 * 24 * 60 * 60 * 1000
+            )};path=/`;
+          }
           navigate("/");
           window.location.reload(true);
           setEmail("");
@@ -56,6 +82,7 @@ export const Login = () => {
       console.log("Login failed. Please try again later.");
     }
   };
+
   useEffect(() => {
     document.title = "HORECA SYSTEMS | login";
   }, []);
@@ -80,7 +107,7 @@ export const Login = () => {
                   <img
                     className="border-radius-15"
                     style={{ width: "400px" }}
-                    src={img1}
+                    src={about?.strHeaderImagePath}
                     alt=""
                   />
                 </div>
@@ -89,15 +116,25 @@ export const Login = () => {
                   <div className="login_wrap widget-taber-content background-white">
                     <div className="padding_eight_all bg-white">
                       <div className="heading_s1">
-                        <h1 className="mb-5">Login</h1>
+                        <h1
+                          className="mb-5"
+                          style={{
+                            marginTop: "10px",
+                            marginBottom: "3px",
+                          }}
+                        >
+                          Login
+                        </h1>
                         <p className="mb-30">
-                          New User Create account?
+                          Don&#39;t have an account ?
                           <a
                             href="/signUp"
                             style={{
-                              fontSize: "20px",
-                              color: "Green;",
+                              fontSize: "16px",
+                              color: "Green",
                               textDecoration: "underline",
+                              marginTop: "10px",
+                              marginBottom: "5px",
                             }}
                           >
                             Create here
@@ -131,21 +168,21 @@ export const Login = () => {
                             onChange={(e) => setPassword(e.target.value)}
                           />
                         </div>
-                        <div className="login_footer form-group">
+                        <div className="login_footer form-group Captcha">
                           <div className="chek-form">
                             <input
                               type="text"
-                              required=""
-                              name="email"
-                              placeholder="Security code *"
+                              required
+                              name="captcha"
+                              value={userInput}
+                              onChange={handleInputChange}
+                              placeholder="CAPTCHA  *"
+                              maxLength="4"
+                              min="1000"
+                              max="9999"
                             />
                           </div>
-                          <span className="security-code">
-                            <b className="text-new">8</b>
-                            <b className="text-hot">6</b>
-                            <b className="text-sale">7</b>
-                            <b className="text-best">5</b>
-                          </span>
+                          <span className="security-code">{captcha}</span>
                         </div>
                         <div className="login_footer form-group mb-50">
                           <div className="chek-form">
@@ -153,13 +190,14 @@ export const Login = () => {
                               <input
                                 className="form-check-input"
                                 type="checkbox"
-                                name="checkbox"
-                                id="exampleCheckbox1"
-                                value=""
+                                name="rememberMe"
+                                id="rememberMe"
+                                checked={rememberMe}
+                                onChange={handleRememberMeChange}
                               />
                               <label
                                 className="form-check-label"
-                                htmlFor="exampleCheckbox1"
+                                htmlFor="rememberMe"
                               >
                                 <span>Remember me</span>
                               </label>
@@ -192,146 +230,3 @@ export const Login = () => {
     </>
   );
 };
-
-// import { useState, useEffect } from "react";
-
-// import { register_url } from "../../config/env";
-// import { useNavigate } from "react-router-dom";
-// import img1 from "../../assets/imgs/theme/about.jpeg";
-// import { intBranchID } from "../../branch/Branch";
-
-// export const Login = () => {
-//   const [userPhone, setUserPhone] = useState("");
-//   const [errorMessage, setErrorMessage] = useState("");
-//   const navigate = useNavigate();
-//   useEffect(() => {
-//     document.title = "HORECA SYSTEMS | login";
-//   });
-//   const handleSubmit = async (event) => {
-//     event.preventDefault();
-
-//     if (userPhone.length === 12 || userPhone.length === 11) {
-//       try {
-//         // Create a new FormData object
-//         const formData = new FormData();
-
-//         formData.append("strUserName", userPhone);
-//         formData.append("intDeviceType", "2");
-//         formData.append("strPlatform", "iOS version 12");
-
-//         const response = await fetch(
-//           `${register_url}&intBranchID=${intBranchID}`,
-//           {
-//             method: "POST",
-//             body: formData,
-//           }
-//         );
-
-//         if (response.ok) {
-//           navigate("/verify", { state: { userPhone } });
-//           setUserPhone("");
-//           setErrorMessage("");
-//         } else {
-//           const errorData = await response.json().catch(() => null);
-//           console.error(
-//             "Error Details:",
-//             errorData || "No error details available"
-//           );
-//         }
-//       } catch (error) {
-//         console.error("Fetch Error:", error);
-//       }
-//     } else {
-//       setErrorMessage(
-//         "Please enter a valid 12-digit phone number. like 923001234567"
-//       );
-//     }
-//   };
-
-//   const handleInputChange = (event) => {
-//     const value = event.target.value;
-//     if (!isNaN(value)) {
-//       setUserPhone(value);
-//       if (value.length === 12 || value.length === 11) {
-//         setErrorMessage("");
-//       }
-//     } else {
-//       setErrorMessage("Please enter numeric digits only.");
-//     }
-//   };
-
-//   return (
-//     <>
-//       <div className="page-header breadcrumb-wrap">
-//         <div className="container">
-//           <div className="breadcrumb">
-//             <a href="/" rel="nofollow">
-//               <i className="fi-rs-home mr-5"></i>Home
-//             </a>
-//             <span></span> Login
-//           </div>
-//         </div>
-//       </div>
-//       <div className="page-content pt-150 pb-150">
-//         <div className="container">
-//           <div className="row">
-//             <div className="col-xl-8 col-lg-11 col-md-12 m-auto">
-//               <div className="row">
-//                 <div className="col-lg-6 pr-30 d-none d-lg-block">
-//                   <img
-//                     className="border-radius-15"
-//                     style={{ width: "400px" }}
-//                     src={img1}
-//                     alt=""
-//                   />
-//                 </div>
-//                 <div className="col-lg-6 col-md-8">
-//                   <div className="login_wrap widget-taber-content background-white">
-//                     <div className="padding_eight_all bg-white">
-//                       <div className="heading_s1">
-//                         <h1 className="mb-5" style={{ color: "#765550" }}>
-//                           Login
-//                         </h1>
-//                       </div>
-//                       <form
-//                         id="userphone_frm"
-//                         action="/verify"
-//                         onSubmit={handleSubmit}
-//                       >
-//                         <div className="form-group">
-//                           <input
-//                             type="text"
-//                             required
-//                             name="user_phone"
-//                             placeholder="923000000000 *"
-//                             id="user_phone"
-//                             value={userPhone}
-//                             maxLength="12"
-//                             onChange={handleInputChange}
-//                           />
-//                         </div>
-//                         {errorMessage && (
-//                           <p style={{ color: "red" }}>{errorMessage}</p>
-//                         )}
-//                         <div className="form-group">
-//                           <button
-//                             type="submit"
-//                             id="login-btn"
-//                             className="btn btn-heading btn-block hover-up btnLogin"
-//                             style={{ background: "#765550" }}
-//                           >
-//                             Log in
-//                           </button>
-//                         </div>
-//                       </form>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </div>
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };

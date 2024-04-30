@@ -170,8 +170,8 @@ export const ProductDetail = () => {
             <div className="clearfix product-price-cover">
               <div className="product-price primary-color float-left">
                 <span className="current-price text-brand">
-                  {singleproduct?.strUOM}
-
+                  {/* {singleproduct?.strUOM} */}
+Rs:
                   {new Intl.NumberFormat("en-US", {
                     style: "decimal",
                   }).format(singleproduct?.dblSalePrice)}

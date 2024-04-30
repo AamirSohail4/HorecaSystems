@@ -3,7 +3,7 @@ import he from "he";
 import { ScrollButton } from "./scrollbutton/ScrollButton";
 import "./footer.css";
 import { useContext, useEffect, useState } from "react";
-import { searchurl } from "../../config/env";
+import { cart_url } from "../../config/env";
 import { MyAccountContext } from "../../context/AccountContext";
 
 export const Footer = () => {
@@ -12,7 +12,7 @@ export const Footer = () => {
 
   useEffect(() => {
     const DisplayCategory = async () => {
-      const response = await fetch(`${searchurl}&tag=get_category&limit=7`);
+      const response = await fetch(`${cart_url}&tag=get_category_web&intCompanyID=1`);
       const mydata = await response.json();
       const mainData = mydata.data;
       // const filteredData = mainData.filter(
@@ -22,8 +22,8 @@ export const Footer = () => {
     };
     DisplayCategory();
   }, []);
-  const handleManuClick = (category_id) => {
-    window.location.href = `/Category?category_id=${category_id}`;
+  const handleManuClick = (category_name) => {
+    window.location.href = `/Category?cateogry_name=${category_name}`;
   };
   // function removeHtmlTags(htmlString) {
   //   return htmlString.replace(/<[^>]+>/g, "");
@@ -85,7 +85,7 @@ export const Footer = () => {
               <h4 className="widget-title">Our Website</h4>
               <ul className="footer-list mb-sm-5 mb-md-0">
                 <li>
-                  <Link to="/login">Signin</Link>
+                  <Link to="/login">Sign in</Link>
                 </li>
                 <li>
                   <Link to="/about">About</Link>
@@ -112,7 +112,7 @@ export const Footer = () => {
                 {footerCategory?.map((item, index) => {
                   return (
                     <li key={index}>
-                      <Link to="#" onClick={() => handleManuClick(item.intID)}>
+                      <Link to="#" onClick={() => handleManuClick(item.strSEOLink)}>
                         {item.strDesc}
                       </Link>
                     </li>
@@ -120,32 +120,7 @@ export const Footer = () => {
                 })}
               </ul>
             </div>
-            {/* <div
-              className="footer-link-widget widget-install-app col wow animate__ animate__fadeInUp animated animated animate__animated animate__bounce"
-              data-wow-delay=".5s"
-              style={{
-                visibility: "visible",
-                animationDelay: "0.9s",
-                animationName: "fadeInUp",
-              }}
-            >
-              <h4 className="widget-title">Install App</h4>
-              <p className="">From App Store or Google Play</p>
-              <div className="mobile-social-icon">
-                <Link to="https://www.instagram.com/horecasystemspk/?igshid=148y4fpr7bxag">
-                  <img
-                    src="https://weberp.pk/app/msbooks/images/web_imageslist/42/icon-instagram-white.svg"
-                    alt=""
-                  />
-                </Link>
-                <Link to="https://www.facebook.com/HorecaSystemsPk/">
-                  <img
-                    src="https://www.weberp.pk/app/msbooks/images/web_imageslist/41/icon-facebook-white.svg"
-                    alt=""
-                  />
-                </Link>
-              </div>
-            </div> */}
+           
           </div>
         </div>
       </section>

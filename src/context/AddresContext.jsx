@@ -38,7 +38,7 @@ export const AppProvider = ({ children }) => {
   const DisplayShipAddres = async () => {
     try {
       const response = await fetch(
-        `${cart_url}&tag=get_user_shipment_address_web&intUserID=${userId}`
+        `${cart_url}&tag=get_user_shipment_address_web&intUserID=${userId}&intCompanyID=1`
       );
       if (response.ok) {
         const shipmentData = await response.json();

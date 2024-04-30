@@ -28,9 +28,9 @@ export const ShopCheckout = () => {
   );
   const PyamentModId = selectedPaymentId;
   console.log("paymentid", intBranchID);
+  const intShipmentAddressID = shipingAddres?.intID;
 
   const handleOrder = async () => {
-    const intShipmentAddressID = shipmentID;
     const intPaymentModeID = PyamentModId;
     const dblSubTotal = subtotal;
     let data = new FormData();
@@ -51,7 +51,9 @@ export const ShopCheckout = () => {
       await response.json();
       clearCartDelete();
       fetchOrdersDetails();
+      alert("Order Placed Succesfully");
       navigate("/");
+     
     }
   };
 
@@ -124,8 +126,8 @@ export const ShopCheckout = () => {
                           </td>
                           <td className="price" data-title="Price">
                             <h4 className="text-body">
-                              {item?.item?.strUOM}
-
+                              {/* {item?.item?.strUOM} */}
+Rs:
                               {parseFloat(
                                 item?.item?.dblSalePrice
                               ).toLocaleString(undefined, {
@@ -180,7 +182,7 @@ export const ShopCheckout = () => {
                               Total
                             </div>
                             <div style={{ display: "inline-block" }}>
-                              Rs.
+                              Rs:
                               {new Intl.NumberFormat("en-US", {
                                 style: "decimal",
                               }).format(calculateTotal())}

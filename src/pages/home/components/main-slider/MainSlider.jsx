@@ -1,6 +1,5 @@
 import { useContext, useRef } from "react";
 import Slider from "react-slick";
-import { mainSlider } from "./data";
 import { AddressContext } from "../../../../context/AddresContext";
 
 export const MainSlider = () => {
@@ -29,22 +28,18 @@ export const MainSlider = () => {
     <section className="home-slider position-relative mb-30">
       <div className="container">
         <div className="home-slide-cover mt-30">
-          <Slider
-            ref={sliderRef}
-            {...settings}
-            className="hero-slider-1 style-4 dot-style-1 dot-style-1-position-1"
-          >
-            {mainSlider?.map((item, index) => {
-              return (
-                <div
-                  className={`single-hero-slider single-animation-wrap slide0${index}`}
-                  key={index}
-                >
-                  <div className="slider-content"></div>
-                </div>
-              );
-            })}
-          </Slider>
+        <Slider {...settings}>
+                    {mainSlider?.map((image, index) => (
+                      <div
+                        key={index}
+                        className="banner-img wow animate__ animate__fadeInUp animated"
+                        data-wow-delay="0"
+                        style={{ visibility: "visible", animationName: "fadeInUp" }}
+                      >
+                        <img src={image?.strURL} alt={`Slide ${index}`} />
+                      </div>
+                    ))}
+                  </Slider>
           <div className="slider-arrow hero-slider-1-arrow">
             <span className="slider-btn slider-prev" onClick={next}>
               <i className="fi-rs-angle-left"></i>

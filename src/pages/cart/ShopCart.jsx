@@ -1,7 +1,7 @@
 import { useContext, useEffect } from "react";
 import { CartContext } from "../../context/CartContext";
 import { useState } from "react";
-import { api_url, cart_url } from "../../config/env";
+import {  cart_url, city_url } from "../../config/env";
 import { Link, useNavigate } from "react-router-dom";
 import { PaymentContext } from "../../context/PaymentMethod";
 import { MyAccountContext } from "../../context/AccountContext";
@@ -9,7 +9,7 @@ import { AddressContext } from "../../context/AddresContext";
 
 export const ShopCart = () => {
   const { userId } = useContext(MyAccountContext);
-  const navigatie = useNavigate();
+  const navigate = useNavigate();
   const { cartItems, clearCartDelete, deleteSingleCartItem, addToCart } =
     useContext(CartContext);
   const { showPaymentMode } = useContext(PaymentContext);
@@ -27,14 +27,18 @@ export const ShopCart = () => {
 
   const handleCheckout = () => {
     if (!selectedPayment || !shipmentaddresValue) {
-      alert("Please Select a Payment option and a Shipment address.");
+      alert("Please select a Payment option and a Shipment address.");
+      return;
+    } else if (!cartItems || cartItems.length === 0) {
+      alert("Your cart is empty. Please add items before checking out.");
       return;
     } else {
-      navigatie("/admin/checkout", {
+      navigate("/admin/checkout", {
         state: { selectedPayment, shipmentaddresValue },
       });
     }
   };
+
   const handleAddModalClick = () => {
     setOpen(!open);
   };
@@ -108,7 +112,9 @@ export const ShopCart = () => {
     document.title = "HORECA SYSTEMS | Cart";
     const fetchCities = async () => {
       try {
-        const response = await fetch(`${api_url}&tag=get_city&intCountryID=1`);
+        const response = await fetch(
+          `${city_url}&tag=get_city&intCountryID=1`
+        );
         const data = await response.json();
         setCities(data.data);
       } catch (error) {
@@ -171,7 +177,7 @@ export const ShopCart = () => {
     data.append("strShipmentContactPerson", formData.name);
     data.append("strShipmentPhone", formData.phone);
     data.append("strShipmentEmail", formData.email);
-    data.append("intShipmentCityID", formData.city);
+    data.append("strShipmentCity", formData.city);
     data.append("strShipmentAddress", formData.address);
 
     const response = await fetch(
@@ -291,7 +297,7 @@ export const ShopCart = () => {
                         </td>
                         <td className="price" data-title="Price">
                           <h4 className="text-body">
-                            {item?.item?.strUOM}
+                            Rs:
                             {new Intl.NumberFormat("en-US", {
                               style: "decimal",
                             }).format(parseFloat(item?.item?.dblSalePrice))}

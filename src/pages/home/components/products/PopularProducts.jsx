@@ -1,5 +1,5 @@
 import { Link, useNavigate } from "react-router-dom";
-import { allProduct_url } from "../../../../config/env";
+import { api_url } from "../../../../config/env";
 import { useContext, useEffect, useState } from "react";
 import { CartContext } from "../../../../context/CartContext";
 import { WishListContext } from "../../../../context/WishListContext";
@@ -35,7 +35,7 @@ export const PopularProducts = () => {
 
   useEffect(() => {
     async function AllProductShow() {
-      const response = await fetch(`${allProduct_url}&limit=20`);
+      const response = await fetch(`${api_url}&tag=get_items_web&intCompanyID=1&strCategorySEOLink=syrups&limit=20`);
       const productData = await response.json();
       setMyProduct(productData.data);
     }

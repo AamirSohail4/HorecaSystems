@@ -2,10 +2,10 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MyAccountContext } from "../../context/AccountContext";
-import { api_url, cart_url } from "../../config/env";
+import {  cart_url, city_url } from "../../config/env";
 import { WishListContext } from "../../context/WishListContext";
 import { CartContext } from "../../context/CartContext";
-
+import { report_url } from "../../config/env";
 import {} from "../../redux/cartSlice";
 
 import { AddressContext } from "../../context/AddresContext";
@@ -13,15 +13,60 @@ import { intBranchID } from "../../branch/branch";
 
 export const MyAccount = () => {
   const { wishlistItems, deleteWishlist } = useContext(WishListContext);
-  const { shipmentAddres, user, deleteUserAddres } = useContext(AddressContext);
-
-  const { userId } = useContext(MyAccountContext);
-
+  const { shipmentAddres,  deleteUserAddres } = useContext(AddressContext);
+  const { userId ,customerId,strToken } = useContext(MyAccountContext);
   const { addProducts, orderItems } = useContext(CartContext);
   const [locatCities, setCities] = useState([]);
   const [selectedProductDesc, setSelectedProductDesc] = useState("");
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [response, setResponse] = useState(null);
+    const [error, setError] = useState(null);
 
+    // Main Section For  Customer Ledger 
+    const fetchData = async () => {
+      const currentDate = new Date();
+      const currentYear = currentDate.getFullYear();
+      const startOfYear = new Date(currentYear, 0, 1); // January is month 0
+      const formattedCurrentDate = formatDate(currentDate);
+      const formattedStartOfYear = formatDate(startOfYear);
+  
+      const url = `${report_url}&tag=show_report&intReportID=6&strToken=${strToken}`;
+  
+      const formData = new URLSearchParams();
+      formData.append('intCustomerID', customerId);
+      formData.append('dtDate',formattedStartOfYear );
+      formData.append('dtDate2', formattedCurrentDate);
+  
+      const requestOptions = {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
+      };
+  
+      try {
+        const response = await fetch(url, requestOptions);
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+
+        setResponse(data?.data);
+        setError(null);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setError(error.message);
+        setResponse(null);
+      }
+    };
+
+    const formatDate = (date) => {
+      // Format date as 'YYYY-MM-DD'
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    //End Main Section Ledger
   const handleSectionClick = async (section) => {
     setActiveSection(section);
     if (section === "account") {
@@ -38,12 +83,19 @@ export const MyAccount = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("userId");
-    localStorage.removeItem("roleId");
-    localStorage.removeItem("persist:root");
+    // Remove items from local storage
+    localStorage.removeItem('customerId');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('strToken');
+
+    // Clear variables
+    let customerId = null;
+    let userId = null;
+    let strToken = null;
     window.location.reload();
     window.location.href = "/";
-  };
+};
+
 
   const [formData, setFormData] = useState({
     full_name: "",
@@ -56,7 +108,9 @@ export const MyAccount = () => {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const response = await fetch(`${api_url}&tag=get_city&intCountryID=1`);
+        const response = await fetch(
+          `${city_url}&tag=get_city&intCountryID=1`
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch city data");
         }
@@ -70,6 +124,7 @@ export const MyAccount = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
+          
           `${cart_url}&intCompanyID=1&intBranchID=${intBranchID}&tag=get_users&intID=${userId}`
         );
         if (!response.ok) {
@@ -77,7 +132,7 @@ export const MyAccount = () => {
         }
         const userData = await response.json();
         const user = userData?.data[0];
-        // Set initial form values
+       
         setFormData({
           full_name: user?.strFullName,
           email: user?.strEmail,
@@ -96,6 +151,7 @@ export const MyAccount = () => {
 
   const handleUpdateClick = async () => {
     try {
+
       const formDataToUpdate = new FormData();
       formDataToUpdate.append("intUserID", userId);
       formDataToUpdate.append("strFullName", formData.full_name);
@@ -117,10 +173,23 @@ export const MyAccount = () => {
         throw new Error("Failed to update user data");
       }
       // Handle successful update
+      alert("Address Update Success Fully");
     } catch (error) {
       console.error("Error updating user data:", error);
     }
   };
+  console.log("City of Shipiment Addres,",shipmentAddres)
+  const TableHeadings = ['strDoc', 'dtDate',  'dblDebit', 'dblCredit','dblBalance', 'strReferenceNo', 'strRemarks'];
+  const transformHeading = (heading) => {
+    // Remove 'str' and 'int' prefixes
+    let transformedHeading = heading.replace(/^(str|dbl|dt)/, '');
+    // Convert to camel case
+    transformedHeading = transformedHeading.replace(/([A-Z])/g, ' $1').trim();
+    // Capitalize first letter
+    transformedHeading = transformedHeading.charAt(0).toUpperCase() + transformedHeading.slice(1);
+    return transformedHeading;
+  };
+  
   return (
     <>
       <main className="main">
@@ -220,6 +289,21 @@ export const MyAccount = () => {
                           </Link>
                         </li>
                         <li className="nav-item">
+                        <Link
+                          to=""
+                          className={`nav-link ${
+                            activeSection === "ledger" ? "active" : ""
+                          }`}
+                          onClick={(event) => {
+                            handleSectionClick("ledger");
+                            fetchData();
+                          }}
+                        >
+                          <i className="fi-rs-heart mr-10"></i>My Ledger
+                        </Link>
+                      </li>
+
+                        <li className="nav-item">
                           <a
                             className="nav-link btnLogout"
                             href="#"
@@ -244,7 +328,7 @@ export const MyAccount = () => {
                           <div className="card-header">
                             <h3 className="mb-0">
                               Hello
-                              {user?.strShipmentPhone}
+                              {formData.alter_phone}
                             </h3>
                           </div>
                           <div className="card-body">
@@ -407,6 +491,7 @@ export const MyAccount = () => {
                                 </thead>
                                 <tbody>
                                   {shipmentAddres?.map((item, index) => {
+                                   
                                     return (
                                       <tr key={index}>
                                         <td>{item?.intID}</td>
@@ -442,7 +527,56 @@ export const MyAccount = () => {
                           </div>
                         </div>
                       </div>
+                       {/* Ledger Data */}
+                      <div
+                        style={{
+                          display: `${activeSection === "ledger" ? "block" : "none"}`,
+                        }}
+                      >
+                        <div className="card">
+                          <div className="card-header">
+                            <h3 className="mb-0"> Ledger Details</h3>
+                          </div>
+                          <div className="card-body">
+                            <div className="table-responsive">
+                              <table className="table">
+                                <thead>
+                                <tr>
+                                  {/* Render modified table headings */}
+                                  {TableHeadings.map((heading, index) => (
+                                    <th key={index}>{transformHeading(heading)}</th>
+                                  ))}
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {response && response.length > 0 ? (
+                                  response.map((item, index) => (
+                                    <tr key={index}>
+                                      <td>{item?.strDoc}</td>
+                                      <td>{item?.dtDate}</td>
+                                      <td>{item?.dblDebit}</td>
+                                      <td>{item?.dblCredit}</td>
+                                      <td>{item?.dblBalance}</td>
+                                      <td>{item?.strReferenceNo}</td>
+                                     
+                                      <td>{item?.strRemarks}</td>
+                                     
+                                    </tr>
+                                  ))
+                                ) : (
+                                  <tr>
+                                    <td colSpan="10" style={{ textAlign: "center" }}>
+                                     Customer Data Not Available
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
 
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                       {/* My Account */}
                       <div
                         style={{

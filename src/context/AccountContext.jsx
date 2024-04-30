@@ -8,6 +8,8 @@ export const MyAccountContext = createContext({});
 export const MyAccountProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  const [customerId, setCustomerId] = useState(localStorage.getItem("customerId"));
+  const [strToken, setStrToken] = useState(localStorage.getItem("strToken"));
   // console.log("user id globel =>>", userId);
 
   const [userAddress, setUserAddress] = useState();
@@ -61,6 +63,10 @@ export const MyAccountProvider = ({ children }) => {
         loading,
         setLoading,
         contactInfo,
+        customerId, 
+        setCustomerId,
+        strToken, 
+        setStrToken
       }}
     >
       {children}

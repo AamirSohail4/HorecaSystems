@@ -3,6 +3,7 @@ import { useContext, useEffect } from "react";
 import { AddressContext } from "../../context/AddresContext";
 import he from "he";
 import { NewsLetterForm } from "../../layouts/NewsLetterForm";
+import { MyComponent } from "./MYComponent";
 export const About = () => {
   const { about } = useContext(AddressContext);
   useEffect(() => {
@@ -55,6 +56,7 @@ export const About = () => {
           </div>
         </div>
       </main>
+     
       <NewsLetterForm />
     </>
   );
